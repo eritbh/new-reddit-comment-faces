@@ -1,0 +1,25 @@
+{
+  "name": "new-reddit-comment-faces",
+  "version": "1.0.0",
+  "description": "",
+  "main": "rollup.config.js",
+  "scripts": {
+    "build": "echo 'Use build:chrome or build:firefox.'",
+    "build:chrome": "TARGET_PLATFORM=chrome rollup -c",
+    "build:firefox": "TARGET_PLATFORM=gecko rollup -c",
+    "clean": "rm -r build",
+    "lint": "eslint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@geo1088/eslint-config": "^3.1.0",
+    "@rollup/plugin-node-resolve": "^11.1.0",
+    "@webcomponents/custom-elements": "^1.4.3",
+    "eslint": "^7.18.0",
+    "rollup": "^2.37.0",
+    "rollup-plugin-webext-manifest": "^0.1.5",
+    "webextension-polyfill": "^0.7.0"
+  }
+}

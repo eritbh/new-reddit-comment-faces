@@ -1,0 +1,33 @@
+{
+	"manifest_version": 2,
+	"name": "New Reddit comment faces",
+	"version": "0.0.1",
+	"description": "Adds classic comment faces to new Reddit.",
+	"author": "eritbh",
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "new-reddit-comment-faces@eritbh.me"
+		}
+	},
+	"permissions": [
+		"https://*.reddit.com/*"
+	],
+	"content_scripts": [
+		{
+			"run_at": "document_start",
+			"matches": [
+				"https://*.reddit.com/*"
+			],
+			"js": [
+				"temp.js",
+				"contentScript.js"
+			]
+		}
+	],
+	"background": {
+		"scripts": [
+			"temp.js",
+			"background.js"
+		]
+	}
+}

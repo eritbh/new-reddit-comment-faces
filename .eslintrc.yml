@@ -1,0 +1,6 @@
+extends: "@geo1088"
+parserOptions:
+  sourceType: module
+env:
+  browser: true
+  webextensions: true
