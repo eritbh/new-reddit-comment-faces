@@ -16,7 +16,6 @@
   "devDependencies": {
     "@geo1088/eslint-config": "^3.1.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
-    "@webcomponents/custom-elements": "^1.4.3",
     "eslint": "^7.18.0",
     "rollup": "^2.37.0",
     "rollup-plugin-webext-manifest": "^0.1.5",

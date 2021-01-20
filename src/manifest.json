@@ -4,6 +4,9 @@
 	"version": "0.0.1",
 	"description": "Adds classic comment faces to new Reddit.",
 	"author": "eritbh",
+	"icons": {
+		"96": "icon96.png"
+	},
 	"browser_specific_settings": {
 		"gecko": {
 			"id": "new-reddit-comment-faces@eritbh.me"
