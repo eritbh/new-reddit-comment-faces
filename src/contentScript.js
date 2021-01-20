@@ -3,12 +3,13 @@ import {send, action} from './messaging';
 import manifest from './manifest.json';
 
 /**
- * Given a jsAPI element, grabs the wrapper for the thing it represents.
+ * Given a jsAPI element for a post or comment, grabs the wrapper for the thing
+ * it represents.
  * @param {Element} element
  * @returns {Element | null}
  */
 function findWrappingElement (element) {
-	while (!element.id.startsWith('t1_')) {
+	while (!element.id.startsWith('t1_') && !element.id.startsWith('t3_')) {
 		if (!element.parentElement) {
 			return null;
 		}
@@ -23,7 +24,9 @@ function findWrappingElement (element) {
  * @param {string} subreddit
  */
 async function handleMarkup (wrapperEl, subreddit) {
-	const commentFaces = wrapperEl.querySelectorAll('a[href^="#"]');
+	// TODO: make generic for more subreddits, for now I'm just hardcoding stuff for /r/anime
+	if (subreddit !== 'anime') return;
+	const commentFaces = wrapperEl.querySelectorAll('a[href^="#"],a[href="/s"]');
 	if (!commentFaces.length) return;
 
 	// Grab the stylesheet for this sub from the background page
@@ -70,6 +73,8 @@ client.on('comment', (element, data) => {
 	handleMarkup(commentEl, data.subreddit.name);
 });
 client.on('post', (element, data) => {
+	// Don't try to process CSS stuff on link/media posts
+	if (!data.media || data.media.type !== 'rtjson') return;
 	const postEl = findWrappingElement(element);
 	if (!postEl) return;
 	handleMarkup(postEl, data.subreddit.name);
