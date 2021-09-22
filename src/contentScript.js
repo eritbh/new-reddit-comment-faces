@@ -41,6 +41,8 @@ async function handleMarkup (wrapperEl, subreddit) {
 		const md = document.createElement('div');
 		md.classList.add('md');
 		const fakeBody = document.createElement('body');
+		// Avoid white background in Reddit dark mode
+		fakeBody.style.backgroundColor = "inherit";
 		fakeBody.append(md);
 
 		// Clone the element we're rendering before adding it to the new tree
