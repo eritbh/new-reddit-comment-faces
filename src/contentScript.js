@@ -3,13 +3,13 @@ import {send, action} from './messaging';
 import manifest from './manifest.json';
 
 /**
- * Given a jsAPI element for a post or comment, grabs the wrapper for the thing
- * it represents.
+ * Given a jsAPI element, grabs the wrapper for the thing it represents.
  * @param {Element} element
+ * @param {string} selector
  * @returns {Element | null}
  */
-function findWrappingElement (element) {
-	while (!element.id.startsWith('t1_') && !element.id.startsWith('t3_') && element.dataset.testid !== 'subreddit-sidebar') {
+function findWrappingElement (element, selector) {
+	while (!element.matches(selector)) {
 		if (!element.parentElement) {
 			return null;
 		}
@@ -116,20 +116,20 @@ async function handleMarkup (wrapperEl, subreddit) {
 const client = new FrontendAPIClient({name: manifest.name});
 
 client.on('comment', (element, data) => {
-	const commentEl = findWrappingElement(element);
+	const commentEl = findWrappingElement(element, 'div[id^="t1"]');
 	if (!commentEl) return;
 	handleMarkup(commentEl, data.subreddit.name);
 });
 client.on('post', (element, data) => {
 	// Don't try to process CSS stuff on link/media posts
 	if (!data.media || data.media.type !== 'rtjson') return;
-	const postEl = findWrappingElement(element);
+	const postEl = findWrappingElement(element, 'div[id^="t3"]');
 	if (!postEl) return;
 	handleMarkup(postEl, data.subreddit.name);
 });
 
 client.on('sidebar', (element, data) => {
-	const sidebarEl = findWrappingElement(element);
+	const sidebarEl = findWrappingElement(element, 'div[data-testid="subreddit-sidebar"]');
 	if (!sidebarEl) return;
 	handleMarkup(sidebarEl, data.subreddit.name);
 });

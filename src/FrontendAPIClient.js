@@ -73,7 +73,6 @@ export default class FrontendAPIClient {
 	 * @param {Element} element
 	 */
 	_emit (type, data, element) {
-		console.log(type, data, element);
 		const listenerList = this._listeners.get(type);
 		if (!listenerList) {
 			return;
