@@ -54,11 +54,11 @@ async function handleMarkup (wrapperEl, subreddit) {
 		'chibi'].includes(subreddit.toLowerCase())) {
 		commentFaceSelector.push('a[href^="#"]');
 	}
-	if (['manga'].includes(subreddit.toLowerCase())) {
-		commentFaceSelector.push('a[href^="//#"]');
-	}
-	if (['anime', 'madokamagica', 'animenocontext', 'k_on'].includes(subreddit.toLowerCase())) {
+	if (['anime', 'manga', 'madokamagica', 'animenocontext', 'k_on'].includes(subreddit.toLowerCase())) {
 		commentFaceSelector.push('a[href="/s"]');
+	}
+	if (subreddit.toLowerCase() === 'manga') {
+		commentFaceSelector.push('a[href^="//#"]');
 	}
 	if (subreddit.toLowerCase() === 'madokamagica') {
 		commentFaceSelector.push('a[href="/g"],a[href="/a"],a[href="/m"]');
@@ -88,7 +88,7 @@ async function handleMarkup (wrapperEl, subreddit) {
 		fakeBody.classList.add('md-container');
 
 		// Avoid white background in Reddit dark mode
-		fakeBody.style.backgroundColor = 'inherit';
+		fakeBody.style.background = 'inherit';
 		fakeBody.append(md);
 
 		// Clone the element we're rendering before adding it to the new tree
