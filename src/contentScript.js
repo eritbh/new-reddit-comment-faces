@@ -24,9 +24,53 @@ function findWrappingElement (element) {
  * @param {string} subreddit
  */
 async function handleMarkup (wrapperEl, subreddit) {
-	// TODO: make generic for more subreddits, for now I'm just hardcoding stuff for /r/anime
-	if (subreddit !== 'anime') return;
-	const commentFaces = wrapperEl.querySelectorAll('a[href^="#"],a[href="/s"]');
+	// TODO: make generic for more subreddits
+
+	const commentFaceSelector = [];
+	if (['anime',
+		'awwnime',
+		'pantsu',
+		'moescape',
+		'twodeeart',
+		'patchuu',
+		'kemonomimi',
+		'visualnovels',
+		'supersonico',
+		'kanmusu',
+		'kanmusunights',
+		'schoolidolfestival',
+		'lovelive',
+		'onetrueidol',
+		'fatestaynight',
+		'saber',
+		'karanokyoukai',
+		'nisekoi',
+		'onetruebiribiri',
+		'onetruetohsaka',
+		'esdeath',
+		'gamindustri',
+		'kancolle',
+		'leagueoflegends',
+		'chibi'].includes(subreddit.toLowerCase())) {
+		commentFaceSelector.push('a[href^="#"]');
+	}
+	if (['manga'].includes(subreddit.toLowerCase())) {
+		commentFaceSelector.push('a[href^="//#"]');
+	}
+	if (['anime', 'madokamagica', 'animenocontext', 'k_on'].includes(subreddit.toLowerCase())) {
+		commentFaceSelector.push('a[href="/s"]');
+	}
+	if (subreddit.toLowerCase() === 'madokamagica') {
+		commentFaceSelector.push('a[href="/g"],a[href="/a"],a[href="/m"]');
+	}
+	if (subreddit.toLowerCase() === 'animesuggest') {
+		commentFaceSelector.push('a[href="#s"]');
+	}
+
+	if (!commentFaceSelector.length) return;
+
+	const commentFaces = wrapperEl.querySelectorAll(commentFaceSelector.join(','));
+
 	if (!commentFaces.length) return;
 
 	// Grab the stylesheet for this sub from the background page
@@ -42,6 +86,7 @@ async function handleMarkup (wrapperEl, subreddit) {
 		md.classList.add('md');
 		const fakeBody = document.createElement('body');
 		fakeBody.classList.add('md-container');
+
 		// Avoid white background in Reddit dark mode
 		fakeBody.style.backgroundColor = 'inherit';
 		fakeBody.append(md);
