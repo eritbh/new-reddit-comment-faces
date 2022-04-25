@@ -9,7 +9,7 @@ import manifest from './manifest.json';
  * @returns {Element | null}
  */
 function findWrappingElement (element) {
-	while (!element.id.startsWith('t1_') && !element.id.startsWith('t3_')) {
+	while (!element.id.startsWith('t1_') && !element.id.startsWith('t3_') && element.dataset.testid !== 'subreddit-sidebar') {
 		if (!element.parentElement) {
 			return null;
 		}
@@ -126,6 +126,12 @@ client.on('post', (element, data) => {
 	const postEl = findWrappingElement(element);
 	if (!postEl) return;
 	handleMarkup(postEl, data.subreddit.name);
+});
+
+client.on('sidebar', (element, data) => {
+	const sidebarEl = findWrappingElement(element);
+	if (!sidebarEl) return;
+	handleMarkup(sidebarEl, data.subreddit.name);
 });
 
 client.listen();
