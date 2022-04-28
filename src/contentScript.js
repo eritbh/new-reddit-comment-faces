@@ -3,7 +3,7 @@ import {send, action} from './messaging';
 import manifest from './manifest.json';
 
 /**
- * Given a jsAPI element, grabs the wrapper for the thing it represents.
+ * Given an element, gets the closest ancestor that matches the given selector.
  * @param {Element} element
  * @param {string} selector
  * @returns {Element | null}

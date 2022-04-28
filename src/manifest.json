@@ -19,7 +19,8 @@
 		{
 			"run_at": "document_start",
 			"matches": [
-				"https://www.reddit.com/*"
+				"https://www.reddit.com/*",
+				"https://new.reddit.com/*"
 			],
 			"js": [
 				"temp.js",
