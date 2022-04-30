@@ -81,6 +81,18 @@ async function handleMarkup (wrapperEl, subreddit) {
 		const styleEl = document.createElement('style');
 		styleEl.innerText = stylesheetText;
 
+		// Add some extra CSS to get rid of pseudo-elements we don't want to see
+		// (they get used for page banners and stuff like that sometimes)
+		styleEl.innerText += `
+			html::before,
+			html::after,
+			body::before,
+			body::after {
+				display: none !important;
+				content: none !important;
+			}
+		`;
+
 		// We mock some of the markup that stylesheets on old Reddit expect
 		const md = document.createElement('div');
 		md.classList.add('md');
