@@ -81,6 +81,18 @@ async function handleMarkup (wrapperEl, subreddit) {
 		const styleEl = document.createElement('style');
 		styleEl.innerText = stylesheetText;
 
+		// Add some extra CSS to get rid of pseudo-elements we don't want to see
+		// (they get used for page banners and stuff like that sometimes)
+		styleEl.innerText += `
+			html::before,
+			html::after,
+			body::before,
+			body::after {
+				display: none !important;
+				content: none !important;
+			}
+		`;
+
 		// We mock some of the markup that stylesheets on old Reddit expect
 		const md = document.createElement('div');
 		md.classList.add('md');
@@ -89,6 +101,17 @@ async function handleMarkup (wrapperEl, subreddit) {
 
 		// Avoid white background in Reddit dark mode
 		fakeBody.style.background = 'inherit';
+
+		// Avoid other layout styles that might be set via CSS but we don't want
+		// TODO: if we ever move subreddit selectors to a JSON file, we should
+		//       also handle these overrides on a subreddit-specific basis there
+		fakeBody.style.border = '0';
+		fakeBody.style.margin = '0';
+		fakeBody.style.padding = '0';
+		fakeBody.style.width = 'initial';
+		fakeBody.style.minWidth = 'initial';
+		fakeBody.style.height = 'initial';
+		fakeBody.style.maxHeight = 'initial';
 		fakeBody.append(md);
 
 		// Clone the element we're rendering before adding it to the new tree

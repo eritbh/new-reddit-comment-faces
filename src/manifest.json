@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "New Reddit comment faces",
 	"version": "1.2.0",
-	"description": "Adds classic comment faces to new Reddit.",
+	"description": "Renders comment faces, spoiler codes, and other old Reddit CSS hacks on new Reddit.",
 	"author": "eritbh",
 	"icons": {
 		"96": "icon96.png"
