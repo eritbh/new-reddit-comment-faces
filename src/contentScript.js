@@ -3,13 +3,13 @@ import {send, action} from './messaging';
 import manifest from './manifest.json';
 
 /**
- * Given a jsAPI element for a post or comment, grabs the wrapper for the thing
- * it represents.
+ * Given an element, gets the closest ancestor that matches the given selector.
  * @param {Element} element
+ * @param {string} selector
  * @returns {Element | null}
  */
-function findWrappingElement (element) {
-	while (!element.id.startsWith('t1_') && !element.id.startsWith('t3_')) {
+function findWrappingElement (element, selector) {
+	while (!element.matches(selector)) {
 		if (!element.parentElement) {
 			return null;
 		}
@@ -24,9 +24,53 @@ function findWrappingElement (element) {
  * @param {string} subreddit
  */
 async function handleMarkup (wrapperEl, subreddit) {
-	// TODO: make generic for more subreddits, for now I'm just hardcoding stuff for /r/anime
-	if (subreddit !== 'anime') return;
-	const commentFaces = wrapperEl.querySelectorAll('a[href^="#"],a[href="/s"]');
+	// TODO: make generic for more subreddits
+
+	const commentFaceSelector = [];
+	if (['anime',
+		'awwnime',
+		'pantsu',
+		'moescape',
+		'twodeeart',
+		'patchuu',
+		'kemonomimi',
+		'visualnovels',
+		'supersonico',
+		'kanmusu',
+		'kanmusunights',
+		'schoolidolfestival',
+		'lovelive',
+		'onetrueidol',
+		'fatestaynight',
+		'saber',
+		'karanokyoukai',
+		'nisekoi',
+		'onetruebiribiri',
+		'onetruetohsaka',
+		'esdeath',
+		'gamindustri',
+		'kancolle',
+		'leagueoflegends',
+		'chibi'].includes(subreddit.toLowerCase())) {
+		commentFaceSelector.push('a[href^="#"]');
+	}
+	if (['anime', 'manga', 'madokamagica', 'animenocontext', 'k_on'].includes(subreddit.toLowerCase())) {
+		commentFaceSelector.push('a[href="/s"]');
+	}
+	if (subreddit.toLowerCase() === 'manga') {
+		commentFaceSelector.push('a[href^="//#"]');
+	}
+	if (subreddit.toLowerCase() === 'madokamagica') {
+		commentFaceSelector.push('a[href="/g"],a[href="/a"],a[href="/m"]');
+	}
+	if (subreddit.toLowerCase() === 'animesuggest') {
+		commentFaceSelector.push('a[href="#s"]');
+	}
+
+	if (!commentFaceSelector.length) return;
+
+	const commentFaces = wrapperEl.querySelectorAll(commentFaceSelector.join(','));
+
 	if (!commentFaces.length) return;
 
 	// Grab the stylesheet for this sub from the background page
@@ -42,8 +86,9 @@ async function handleMarkup (wrapperEl, subreddit) {
 		md.classList.add('md');
 		const fakeBody = document.createElement('body');
 		fakeBody.classList.add('md-container');
+
 		// Avoid white background in Reddit dark mode
-		fakeBody.style.backgroundColor = 'inherit';
+		fakeBody.style.background = 'inherit';
 		fakeBody.append(md);
 
 		// Clone the element we're rendering before adding it to the new tree
@@ -71,16 +116,22 @@ async function handleMarkup (wrapperEl, subreddit) {
 const client = new FrontendAPIClient({name: manifest.name});
 
 client.on('comment', (element, data) => {
-	const commentEl = findWrappingElement(element);
+	const commentEl = findWrappingElement(element, 'div[id^="t1"]');
 	if (!commentEl) return;
 	handleMarkup(commentEl, data.subreddit.name);
 });
 client.on('post', (element, data) => {
 	// Don't try to process CSS stuff on link/media posts
 	if (!data.media || data.media.type !== 'rtjson') return;
-	const postEl = findWrappingElement(element);
+	const postEl = findWrappingElement(element, 'div[id^="t3"]');
 	if (!postEl) return;
 	handleMarkup(postEl, data.subreddit.name);
+});
+
+client.on('sidebar', (element, data) => {
+	const sidebarEl = findWrappingElement(element, 'div[data-testid="subreddit-sidebar"]');
+	if (!sidebarEl) return;
+	handleMarkup(sidebarEl, data.subreddit.name);
 });
 
 client.listen();
