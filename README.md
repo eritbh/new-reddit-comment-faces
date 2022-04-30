@@ -1,6 +1,6 @@
 # New Reddit comment faces
 
-A browser extension that renders /r/anime's comment faces on new Reddit.
+A browser extension that renders comment faces, spoiler codes, and other old Reddit CSS hacks on new Reddit.
 
 ## Building
 
