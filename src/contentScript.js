@@ -32,33 +32,36 @@ async function handleMarkup (wrapperEl, subreddit) {
 	if (!commentFaces.length) return;
 
 	// Grab the stylesheet for this sub from the background page
-	const stylesheetText = await send(action.getSubredditStylesheet, subreddit);
+	let stylesheetText = await send(action.getSubredditStylesheet, subreddit);
+
+	// Add some extra CSS to get rid of pseudo-elements and other full-page
+	// styles we don't want to see (they get used for page banners and stuff
+	// like that sometimes)
+	// TODO: Figure out which subreddits need this and which don't and move it
+	//       into the map in `subreddits/customStyles.js` only for those that do
+	stylesheetText += `
+		html::before,
+		html::after,
+		body::before,
+		body::after {
+			display: none !important;
+			content: none !important;
+		}
+		body {
+			border: 0 !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			width: initial !important;
+			min-width: initial !important;
+			height: initial !important;
+			max-height: initial !important;
+		}
+	`;
 
 	for (const el of commentFaces) {
 		// The old reddit stylesheet
 		const styleEl = document.createElement('style');
 		styleEl.innerText = stylesheetText;
-
-		// Add some extra CSS to get rid of pseudo-elements we don't want to see
-		// (they get used for page banners and stuff like that sometimes)
-		styleEl.innerText += `
-			html::before,
-			html::after,
-			body::before,
-			body::after {
-				display: none !important;
-				content: none !important;
-			}
-			body {
-				border: 0 !important;
-				margin: 0 !important;
-				padding: 0 !important;
-				width: initial !important;
-				min-width: initial !important;
-				height: initial !important;
-				max-height: initial !important;
-			}
-		`;
 
 		// We mock some of the markup that stylesheets on old Reddit expect
 		const md = document.createElement('div');
