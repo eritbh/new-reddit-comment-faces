@@ -49,6 +49,15 @@ async function handleMarkup (wrapperEl, subreddit) {
 				display: none !important;
 				content: none !important;
 			}
+			body {
+				border: 0 !important;
+				margin: 0 !important;
+				padding: 0 !important;
+				width: initial !important;
+				min-width: initial !important;
+				height: initial !important;
+				max-height: initial !important;
+			}
 		`;
 
 		// We mock some of the markup that stylesheets on old Reddit expect
@@ -60,16 +69,6 @@ async function handleMarkup (wrapperEl, subreddit) {
 		// Avoid white background in Reddit dark mode
 		fakeBody.style.background = 'inherit';
 
-		// Avoid other layout styles that might be set via CSS but we don't want
-		// TODO: if we ever move subreddit selectors to a JSON file, we should
-		//       also handle these overrides on a subreddit-specific basis there
-		fakeBody.style.border = '0';
-		fakeBody.style.margin = '0';
-		fakeBody.style.padding = '0';
-		fakeBody.style.width = 'initial';
-		fakeBody.style.minWidth = 'initial';
-		fakeBody.style.height = 'initial';
-		fakeBody.style.maxHeight = 'initial';
 		fakeBody.append(md);
 
 		// Clone the element we're rendering before adding it to the new tree
