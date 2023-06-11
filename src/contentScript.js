@@ -25,10 +25,10 @@ function findWrappingElement (element, selector) {
  * @param {string} subreddit
  */
 async function handleMarkup (wrapperEl, subreddit) {
-	const commentFaceSelectors = selectors[subreddit.toLowerCase()];
-	if (!commentFaceSelectors || !commentFaceSelectors.length) return;
+	const commentFaceSelector = selectors[subreddit.toLowerCase()];
+	if (!commentFaceSelector) return;
 
-	const commentFaces = wrapperEl.querySelectorAll(commentFaceSelectors.join(','));
+	const commentFaces = wrapperEl.querySelectorAll(commentFaceSelector);
 	if (!commentFaces.length) return;
 
 	// Grab the stylesheet for this sub from the background page
