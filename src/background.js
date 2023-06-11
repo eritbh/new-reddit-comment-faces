@@ -24,7 +24,7 @@ browser.runtime.onMessage.addListener(async message => {
 
 const stylesheets = new Map();
 
-messageHandlers.set(action.getSubredditStylesheet, async subreddit => {
+messageHandlers.set(action.getSubredditStylesheet, async ([subreddit]) => {
 	// Used the cached content, if we have it
 	let styleText = stylesheets.get(subreddit);
 	if (styleText != null) {
