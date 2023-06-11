@@ -1,4 +1,5 @@
 import {action} from './messaging';
+import customStyles from './subreddits/customStyles';
 
 const messageHandlers = new Map();
 
@@ -50,6 +51,9 @@ messageHandlers.set(action.getSubredditStylesheet, async ([subreddit]) => {
 	//       returns the string you see in HTML, which can be passed back to the
 	//       content script and interpreted in the correct context.
 	styleText = [...links].map(link => `@import "${link.getAttribute('href').replace(/"/g, '\\"')}";`).join('');
+
+	// Add any additional subreddit-specific compatibility CSS
+	styleText += customStyles[subreddit.toLowerCase()] || '';
 
 	// Set cache and return
 	stylesheets.set(subreddit, styleText);
