@@ -49,6 +49,7 @@ export default {
 		'a[href^="#"]',
 	],
 	madokamagica: [
+		'a[href^="#"]',
 		'a[href="/a"]',
 		'a[href="/g"]',
 		'a[href="/m"]',
