@@ -70,7 +70,7 @@ async function handleMarkup (wrapperEl, subreddit) {
 		fakeBody.classList.add('md-container');
 
 		// Avoid white background in Reddit dark mode
-		fakeBody.style.background = 'inherit';
+		fakeBody.style.background = 'inherit !important';
 
 		fakeBody.append(md);
 
