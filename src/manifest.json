@@ -13,7 +13,8 @@
 		}
 	},
 	"permissions": [
-		"https://*.reddit.com/*"
+		"https://*.reddit.com/*",
+		"https://*.reddittorjg6rue252oqsxryoxengawnmo46qy4kyii5wtqnwfj4ooad.onion/*"
 	],
 	"content_scripts": [
 		{
