@@ -1,6 +1,7 @@
 import FrontendAPIClient from './FrontendAPIClient';
 import {send, action} from './messaging';
 import manifest from './manifest.json';
+import selectors from './subreddits/selectors';
 
 /**
  * Given an element, gets the closest ancestor that matches the given selector.
@@ -24,74 +25,43 @@ function findWrappingElement (element, selector) {
  * @param {string} subreddit
  */
 async function handleMarkup (wrapperEl, subreddit) {
-	// TODO: make generic for more subreddits
+	const commentFaceSelector = selectors[subreddit.toLowerCase()];
+	if (!commentFaceSelector) return;
 
-	const commentFaceSelector = [];
-	if (['anime',
-		'awwnime',
-		'pantsu',
-		'moescape',
-		'twodeeart',
-		'patchuu',
-		'kemonomimi',
-		'visualnovels',
-		'supersonico',
-		'kanmusu',
-		'kanmusunights',
-		'schoolidolfestival',
-		'lovelive',
-		'onetrueidol',
-		'fatestaynight',
-		'saber',
-		'karanokyoukai',
-		'nisekoi',
-		'onetruebiribiri',
-		'onetruetohsaka',
-		'esdeath',
-		'gamindustri',
-		'kancolle',
-		'leagueoflegends',
-		'chibi'].includes(subreddit.toLowerCase())) {
-		commentFaceSelector.push('a[href^="#"]');
-	}
-	if (['anime', 'manga', 'madokamagica', 'animenocontext', 'k_on'].includes(subreddit.toLowerCase())) {
-		commentFaceSelector.push('a[href="/s"]');
-	}
-	if (subreddit.toLowerCase() === 'manga') {
-		commentFaceSelector.push('a[href^="//#"]');
-	}
-	if (subreddit.toLowerCase() === 'madokamagica') {
-		commentFaceSelector.push('a[href="/g"],a[href="/a"],a[href="/m"]');
-	}
-	if (subreddit.toLowerCase() === 'animesuggest') {
-		commentFaceSelector.push('a[href="#s"]');
-	}
-
-	if (!commentFaceSelector.length) return;
-
-	const commentFaces = wrapperEl.querySelectorAll(commentFaceSelector.join(','));
-
+	const commentFaces = wrapperEl.querySelectorAll(commentFaceSelector);
 	if (!commentFaces.length) return;
 
 	// Grab the stylesheet for this sub from the background page
-	const stylesheetText = await send(action.getSubredditStylesheet, subreddit);
+	let stylesheetText = await send(action.getSubredditStylesheet, subreddit);
+
+	// Add some extra CSS to get rid of pseudo-elements and other full-page
+	// styles we don't want to see (they get used for page banners and stuff
+	// like that sometimes)
+	// TODO: Figure out which subreddits need this and which don't and move it
+	//       into the map in `subreddits/customStyles.js` only for those that do
+	stylesheetText += `
+		html::before,
+		html::after,
+		body::before,
+		body::after {
+			display: none !important;
+			content: none !important;
+		}
+		body {
+			border: 0 !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			width: initial !important;
+			min-width: initial !important;
+			height: initial !important;
+			max-height: initial !important;
+		}
+	`;
 
 	for (const el of commentFaces) {
 		// The old reddit stylesheet
 		const styleEl = document.createElement('style');
 		styleEl.innerText = stylesheetText;
-
-		// Add some extra CSS to get rid of pseudo-elements we don't want to see
-		// (they get used for page banners and stuff like that sometimes)
-		styleEl.innerText += `
-			html::before,
-			html::after,
-			body::before,
-			body::after {
-				display: none !important;
-				content: none !important;
-			}
-		`;
 
 		// We mock some of the markup that stylesheets on old Reddit expect
 		const md = document.createElement('div');
@@ -100,18 +70,8 @@ async function handleMarkup (wrapperEl, subreddit) {
 		fakeBody.classList.add('md-container');
 
 		// Avoid white background in Reddit dark mode
-		fakeBody.style.background = 'inherit';
+		fakeBody.style.background = 'inherit !important';
 
-		// Avoid other layout styles that might be set via CSS but we don't want
-		// TODO: if we ever move subreddit selectors to a JSON file, we should
-		//       also handle these overrides on a subreddit-specific basis there
-		fakeBody.style.border = '0';
-		fakeBody.style.margin = '0';
-		fakeBody.style.padding = '0';
-		fakeBody.style.width = 'initial';
-		fakeBody.style.minWidth = 'initial';
-		fakeBody.style.height = 'initial';
-		fakeBody.style.maxHeight = 'initial';
 		fakeBody.append(md);
 
 		// Clone the element we're rendering before adding it to the new tree

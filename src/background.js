@@ -1,4 +1,5 @@
 import {action} from './messaging';
+import customStyles from './subreddits/customStyles';
 
 const messageHandlers = new Map();
 
@@ -24,7 +25,7 @@ browser.runtime.onMessage.addListener(async message => {
 
 const stylesheets = new Map();
 
-messageHandlers.set(action.getSubredditStylesheet, async subreddit => {
+messageHandlers.set(action.getSubredditStylesheet, async ([subreddit]) => {
 	// Used the cached content, if we have it
 	let styleText = stylesheets.get(subreddit);
 	if (styleText != null) {
@@ -50,6 +51,9 @@ messageHandlers.set(action.getSubredditStylesheet, async subreddit => {
 	//       returns the string you see in HTML, which can be passed back to the
 	//       content script and interpreted in the correct context.
 	styleText = [...links].map(link => `@import "${link.getAttribute('href').replace(/"/g, '\\"')}";`).join('');
+
+	// Add any additional subreddit-specific compatibility CSS
+	styleText += customStyles[subreddit.toLowerCase()] || '';
 
 	// Set cache and return
 	stylesheets.set(subreddit, styleText);
